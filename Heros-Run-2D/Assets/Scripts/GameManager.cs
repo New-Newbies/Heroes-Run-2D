@@ -3,6 +3,7 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
 
+	public BoardManager boardScript;	
 	public static GameManager instance = null;
 
 	void Awake () {
@@ -12,6 +13,13 @@ public class GameManager : MonoBehaviour {
 			Destroy (gameObject);
 		
 		DontDestroyOnLoad (gameObject);
+
+		boardScript = GetComponent<BoardManager> ();
+		InitGame ();
+	}
+
+	private void InitGame(){
+		boardScript.SetupScene ();
 	}
 	
 }
