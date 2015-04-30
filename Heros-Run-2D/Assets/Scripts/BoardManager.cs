@@ -7,29 +7,30 @@ public class BoardManager : MonoBehaviour {
 
 	public float scrollSpeed = 0.1f;
 	public GameObject backgroundObject;
-
-	private GameObject[] backgroundTiles;
+	public GameObject moon;
+	public Vector2 moonPosition;
 
 	private void BoardSetup(){
 		boardHolder = new GameObject ("Board").transform;
 
-		backgroundTiles = new GameObject[20];
-
-		for (var i=0; i<20; ++i) {
-			CreateBackground (i, new Vector3 ((i-10)*4.25f, 0, 0f));
-		}
+		var w = Screen.width;
+		var h = Screen.height;
+		//for (var i=0; i<20; ++i) {
+		var obj = CreateObject (backgroundObject, new Vector3 (0*4.25f, 0, 0f));
+		obj.transform.localScale = new Vector2 ((w+253)/425f, (h+130)/283f);
+			
+		//}
 
 	}
 
 	public void SetupScene(){
 		BoardSetup ();
 	}
-
-	private void CreateBackground(int i, Vector3 v){
+	private GameObject CreateObject(GameObject obj, Vector3 v){
 		var instance = 
-			Instantiate(backgroundObject, v, 
+			Instantiate(obj, v, 
 			            Quaternion.identity) as GameObject;
 		instance.transform.SetParent(boardHolder);
-		backgroundTiles [i] = instance;
+		return instance;
 	}
 }
