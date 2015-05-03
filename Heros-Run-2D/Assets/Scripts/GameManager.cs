@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
 	public BoardManager boardScript;	
 	public static GameManager instance = null;
+
+	private int score = 0;
 
 	void Awake () {
 		if (instance == null)
@@ -18,7 +21,13 @@ public class GameManager : MonoBehaviour {
 		InitGame ();
 	}
 
+	public void OnJump(){
+		++score;
+	}
+
 	private void InitGame(){
+		var button = GameObject.Find ("ButtonJump").GetComponent<Button> ();
+
 		boardScript.SetupScene ();
 	}
 	

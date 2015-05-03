@@ -1,26 +1,63 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class BoardManager : MonoBehaviour {
 
 	private Transform boardHolder;
 
 	public float scrollSpeed = 0.1f;
+	public Text score;
 	public GameObject backgroundObject;
-	public GameObject moon;
-	public Vector2 moonPosition;
+	public GameObject testObject;
+	public Vector2 offsetRate = new Vector2 (2 / 3.0f, 2 / 3.0f);
+
+	private GameObject bg1;
+	private GameObject bg2;
+	private GameObject bg3;
+
+	private float w;
+	private float h;
 
 	private void BoardSetup(){
 		boardHolder = new GameObject ("Board").transform;
 
-		var w = Screen.width;
-		var h = Screen.height;
-		//for (var i=0; i<20; ++i) {
-		var obj = CreateObject (backgroundObject, new Vector3 (0*4.25f, 0, 0f));
-		obj.transform.localScale = new Vector2 ((w+253)/425f, (h+130)/283f);
-			
-		//}
 
+		bg1 = CreateObject (backgroundObject, new Vector3 (0, 0, 0f));
+		bg2 = CreateObject (backgroundObject, new Vector3 (0, 0, 0f));
+		bg3 = CreateObject (backgroundObject, new Vector3 (0, 0, 0f));
+
+		SetPos ();
+	}
+
+	void SetPos(){
+		w = Screen.width;
+		h = Screen.height;
+		var p0 = Camera.main.ScreenToWorldPoint (new Vector3 (0, 0, 0));
+		var p1 = Camera.main.ScreenToWorldPoint (new Vector3 (w, h, 0));
+		var p2 = Camera.main.ViewportToWorldPoint (new Vector3 (0, 0, 0));
+		var p3 = Camera.main.ViewportToWorldPoint (new Vector3 (1, 1, 0));
+		var delta = p3 - p2;
+		var scale = new Vector2 (delta.x/4.25f, delta.y/2.83f);
+
+		ResetBackgroundObject (bg1, -delta.x/2, delta.x, scale);
+		ResetBackgroundObject (bg2, delta.x/2, delta.x, scale);
+		ResetBackgroundObject (bg3, delta.x + delta.x/2, delta.x, scale);
+	}
+
+	private void ResetBackgroundObject(
+			GameObject bg, float xOff, float tileSize, Vector2 scale){
+		bg.transform.position = new Vector3 (xOff, 0, 0f);
+		bg.transform.localScale = scale;
+		var sc = bg.GetComponent<BGScroller> ();
+		sc.tileSizeZ = tileSize;
+		sc.Reset ();
+	}
+
+	void Update(){
+		if (Mathf.Abs(Screen.width - w)<float.Epsilon && Mathf.Abs(Screen.height - h)<float.Epsilon)
+			return;
+		SetPos ();
 	}
 
 	public void SetupScene(){
