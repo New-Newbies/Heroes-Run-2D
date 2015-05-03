@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
 	public static GameManager instance = null;
 
 	private int score = 0;
+	private Text scoreText;
 
 	void Awake () {
 		if (instance == null)
@@ -25,8 +26,18 @@ public class GameManager : MonoBehaviour {
 		++score;
 	}
 
+	public void AddScore(int scoreDelta){
+		score += scoreDelta;
+		scoreText.text = score.ToString ("d8");
+	}
+
 	private void InitGame(){
 		var button = GameObject.Find ("ButtonJump").GetComponent<Button> ();
+		scoreText = GameObject.Find ("Score").GetComponent<Text> ();
+
+		button.onClick.AddListener (() => {
+			AddScore(1);
+		});
 
 		boardScript.SetupScene ();
 	}

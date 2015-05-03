@@ -33,11 +33,9 @@ public class BoardManager : MonoBehaviour {
 	void SetPos(){
 		w = Screen.width;
 		h = Screen.height;
-		var p0 = Camera.main.ScreenToWorldPoint (new Vector3 (0, 0, 0));
-		var p1 = Camera.main.ScreenToWorldPoint (new Vector3 (w, h, 0));
-		var p2 = Camera.main.ViewportToWorldPoint (new Vector3 (0, 0, 0));
-		var p3 = Camera.main.ViewportToWorldPoint (new Vector3 (1, 1, 0));
-		var delta = p3 - p2;
+		var p0 = Camera.main.ViewportToWorldPoint (new Vector3 (0, 0, 0));
+		var p1 = Camera.main.ViewportToWorldPoint (new Vector3 (1, 1, 0));
+		var delta = p1 - p0;
 		var scale = new Vector2 (delta.x/4.25f, delta.y/2.83f);
 
 		ResetBackgroundObject (bg1, -delta.x/2, delta.x, scale);
