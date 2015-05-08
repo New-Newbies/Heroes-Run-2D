@@ -5,6 +5,7 @@ public class BGScroller : MonoBehaviour
 {
 	public float scrollSpeed;
 	public float tileSizeZ;
+	public bool loop;
 
 	private Vector3 startPosition;
 	
@@ -19,8 +20,15 @@ public class BGScroller : MonoBehaviour
 
 	void Update ()
 	{
-		float newPosition = Mathf.Repeat(Time.time * scrollSpeed, tileSizeZ);
+		if (loop) {
+			float newPosition = Mathf.Repeat (Time.time * scrollSpeed, tileSizeZ);
 
-		transform.position = startPosition + Vector3.left * newPosition;
+			transform.position = startPosition + Vector3.left * newPosition;
+		} else {
+			float newPosition = Time.time * scrollSpeed;
+			if(newPosition> tileSizeZ)
+				Destroy(this);
+			transform.position = startPosition + Vector3.left * newPosition;
+		}
 	}
 }

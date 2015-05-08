@@ -9,7 +9,9 @@ public class BoardManager : MonoBehaviour {
 	public float scrollSpeed = 0.1f;
 	public Text score;
 	public GameObject backgroundObject;
-	public GameObject testObject;
+	public GameObject cloud;
+	public GameObject fireHydrant;
+	public GameObject Trashcan;
 	public Vector2 offsetRate = new Vector2 (2 / 3.0f, 2 / 3.0f);
 
 	private GameObject bg1;
@@ -22,10 +24,11 @@ public class BoardManager : MonoBehaviour {
 	private void BoardSetup(){
 		boardHolder = new GameObject ("Board").transform;
 
-
 		bg1 = CreateObject (backgroundObject, new Vector3 (0, 0, 0f));
 		bg2 = CreateObject (backgroundObject, new Vector3 (0, 0, 0f));
 		bg3 = CreateObject (backgroundObject, new Vector3 (0, 0, 0f));
+
+		//CreateCloud
 
 		SetPos ();
 	}
