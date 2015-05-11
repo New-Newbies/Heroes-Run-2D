@@ -29,7 +29,7 @@ public class BoardManager : MonoBehaviour {
 		bg3 = CreateObject (backgroundObject, new Vector3 (0, 0, 0f));
 
 		//CreateCloud
-
+		Physics2D.gravity = new Vector2(0, -1.0F);
 		SetPos ();
 	}
 

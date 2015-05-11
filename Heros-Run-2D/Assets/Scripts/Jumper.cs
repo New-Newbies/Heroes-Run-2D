@@ -1,15 +1,28 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
-public class Jumper : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
+public class Jumper : MonoBehaviour
+{
+	public float scrollSpeed;
+	public float tileSizeZ;
+	public bool loop;
 	
+	private Vector3 startPosition;
+	
+	void Start ()
+	{
+		startPosition = transform.position;
+		//anim.SetBool("Ground", false);
+		GetComponent<Rigidbody2D>().AddForce(new Vector2(0, jumpForce));
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	public void Reset(){
+		startPosition = transform.position;
+	}
 	
+	void Jump ()
+	{
+
+
 	}
 }
