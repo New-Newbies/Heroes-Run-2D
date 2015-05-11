@@ -26,8 +26,10 @@ public class BGScroller : MonoBehaviour
 			transform.position = startPosition + Vector3.left * newPosition;
 		} else {
 			float newPosition = Time.time * scrollSpeed;
-			if(newPosition> tileSizeZ)
+			if(newPosition> tileSizeZ){
+				gameObject.SetActive(false);
 				Destroy(this);
+			}
 			transform.position = startPosition + Vector3.left * newPosition;
 		}
 	}
