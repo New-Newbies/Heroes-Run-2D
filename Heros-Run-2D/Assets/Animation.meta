@@ -1,13 +1,8 @@
 fileFormatVersion: 2
-<<<<<<< HEAD
 guid: 3bb365a377c3b4d009118211b7907f62
 folderAsset: yes
 timeCreated: 1430891773
-=======
-guid: 682a46828b7027d4cb5e482c33977ee9
-folderAsset: yes
-timeCreated: 1431329595
->>>>>>> When a background scrolling object run out, make it disappeared
+When a background scrolling object run out, make it disappeared
 licenseType: Free
 DefaultImporter:
   userData: 
