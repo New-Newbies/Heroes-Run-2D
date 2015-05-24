@@ -14,6 +14,7 @@ public class BoardManager : MonoBehaviour {
 	public GameObject fireHydrant;
 	public GameObject Trashcan;
 	public Vector2 offsetRate = new Vector2 (2 / 3.0f, 2 / 3.0f);
+	public float obstacleFreq = 1 / 2;
 
 	private GameObject bg1;
 	private GameObject bg2;
@@ -36,15 +37,17 @@ public class BoardManager : MonoBehaviour {
 		SetPos ();
 
 		for (int i=0; i<10; ++i) {
-			var c = CreateObject (cloud, new Vector3 (Random.Range(-delta.x, delta.x),
+			var c = CreateObject (cloud, new Vector3 (Random.Range(-delta.x/2, delta.x/2),
 			                                          Random.Range (delta.y / 2f - 2.2f, delta.y / 2f - 0.2f), 0f));
 			var sc = c.GetComponent<BGScroller> ();
 			sc.tileSizeZ = delta.x + c.transform.position.x;
 			c.SetActive (true);
 			sc.SetResetFunc (o => {
-				o.transform.position = new Vector3 (Random.Range(delta.x, delta.x*0.1f),
+				o.transform.position = new Vector3 (Random.Range(delta.x, delta.x + delta.x*0.1f),
 				                                    Random.Range (delta.y / 2f - 2.2f, delta.y / 2f - 0.2f), 0f);
-				sc.tileSizeZ = delta.x + c.transform.position.x;
+				var sc1 = c.GetComponent<BGScroller> ();
+				sc1.tileSizeZ = delta.x + c.transform.position.x;
+				sc1.Reset();
 			});
 		}
 
@@ -76,10 +79,29 @@ public class BoardManager : MonoBehaviour {
 		sc.Reset ();
 	}
 
+	private float nextOb = 0;
 	void Update(){
-		if (Mathf.Abs(Screen.width - w)<float.Epsilon && Mathf.Abs(Screen.height - h)<float.Epsilon)
+		if (Mathf.Abs(Screen.width - w)>=float.Epsilon && Mathf.Abs(Screen.height - h)>=float.Epsilon)
+			SetPos ();
+
+		if (Time.time <= nextOb)
 			return;
-		SetPos ();
+
+		var obj = Random.Range (0, 2) == 0 ? Trashcan : fireHydrant;
+
+		var c = CreateObject (obj, new Vector3 (Random.Range(2*delta.x, 3*delta.x),
+		                                          Random.Range (delta.y / 2f - 6.5f, delta.y / 2f - 5.5f), 0f));
+		var sc = c.GetComponent<BGScroller> ();
+		sc.tileSizeZ = delta.x + c.transform.position.x;
+		if(obj==Trashcan)
+			sc.transform.localScale = new Vector2 (0.2f, 0.2f);
+		c.SetActive (true);
+		sc.SetResetFunc (o => {
+			o.SetActive(false);
+			Destroy(o);
+		});
+
+		nextOb = Time.time + 1/obstacleFreq;
 	}
 
 	public void SetupScene(){
