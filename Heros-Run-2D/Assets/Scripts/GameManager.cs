@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour {
 
@@ -9,6 +10,7 @@ public class GameManager : MonoBehaviour {
 
 	private int score = 0;
 	private Text scoreText;
+	private Image StartButton;
 
 	void Awake () {
 		if (instance == null)
@@ -38,8 +40,6 @@ public class GameManager : MonoBehaviour {
 		button.onClick.AddListener (() => {
 			AddScore(1);
 		});
-
-		boardScript.SetupScene ();
 	}
 	
 }
