@@ -19,4 +19,24 @@ public class Loader : MonoBehaviour {
 		GameManager.instance.boardScript.SetupScene ();
 	}
 
+	public void TriggerPlaying(){
+		Playing = !Playing;
+	}
+
+	private bool playing=true;
+	private bool Playing {
+		get{
+			return playing;
+		}
+		set {
+			if(value && !playing)
+				GameManager.instance.boardScript.Continue();
+
+			if(!value && playing)
+				GameManager.instance.boardScript.Pause();
+
+			playing = value;
+		}
+	}
+
 }

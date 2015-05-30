@@ -17,6 +17,8 @@ public class BoardManager : MonoBehaviour {
 	public Vector2 offsetRate = new Vector2 (2 / 3.0f, 2 / 3.0f);
 	public float obstacleFreq = 1 / 2;
 
+	private List<BGScroller> scs = new List<BGScroller>();
+
 	private GameObject bg1;
 	private GameObject bg2;
 	private GameObject bg3;
@@ -32,8 +34,11 @@ public class BoardManager : MonoBehaviour {
 		boardHolder = new GameObject ("Board").transform;
 
 		bg1 = CreateObject (backgroundObject, new Vector3 (0, 0, 0f));
+		scs.Add(bg1.GetComponent<BGScroller>());
 		bg2 = CreateObject (backgroundObject, new Vector3 (0, 0, 0f));
+		scs.Add(bg2.GetComponent<BGScroller>());
 		bg3 = CreateObject (backgroundObject, new Vector3 (0, 0, 0f));
+		scs.Add(bg3.GetComponent<BGScroller>());
 
 		SetPos ();
 
@@ -41,6 +46,7 @@ public class BoardManager : MonoBehaviour {
 			var c = CreateObject (cloud, new Vector3 (Random.Range(-delta.x/2, delta.x/2),
 			                                          Random.Range (delta.y / 2f - 2.2f, delta.y / 2f - 0.2f), 0f));
 			var sc = c.GetComponent<BGScroller> ();
+			scs.Add(sc);
 			sc.tileSizeZ = delta.x + c.transform.position.x;
 			c.SetActive (true);
 			sc.SetResetFunc (o => {
@@ -81,8 +87,8 @@ public class BoardManager : MonoBehaviour {
 	}
 
 	public void CheckGameOver(double positionX){
-		if (positionX < -delta.x/2) 
-			GameObject.Find ("GameOver").SetActive (true);
+		if (positionX < -delta.x / 2) 
+			Application.Quit ();
 	}
 
 	private float nextOb = 0;
@@ -101,12 +107,14 @@ public class BoardManager : MonoBehaviour {
 		var c = CreateObject (obj, new Vector3 (Random.Range(2*delta.x, 3*delta.x),
 		                                          Random.Range (delta.y / 2f - 6.5f, delta.y / 2f - 5.5f), 0f));
 		var sc = c.GetComponent<BGScroller> ();
+		scs.Add (sc);
 		sc.tileSizeZ = delta.x + c.transform.position.x;
 		if(obj==Trashcan)
 			sc.transform.localScale = new Vector2 (0.2f, 0.2f);
 		c.SetActive (true);
 		sc.SetResetFunc (o => {
 			o.SetActive(false);
+			scs.Remove(sc);
 			Destroy(o);
 		});
 
@@ -122,5 +130,15 @@ public class BoardManager : MonoBehaviour {
 			            Quaternion.identity) as GameObject;
 		instance.transform.SetParent(boardHolder);
 		return instance;
+	}
+	public void Pause(){
+		foreach (var sc in scs) {
+			sc.Disable();
+		}
+	}
+	public void Continue(){
+		foreach (var sc in scs) {
+			sc.Enable();
+		}
 	}
 }

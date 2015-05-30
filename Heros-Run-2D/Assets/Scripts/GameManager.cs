@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour {
 	private Text scoreText;
 	private Image StartButton;
 
+	public delegate void Action();
+
 	void Awake () {
 		if (instance == null)
 			instance = this;
