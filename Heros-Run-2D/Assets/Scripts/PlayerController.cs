@@ -17,25 +17,11 @@ public class PlayerController : MovingObject
 	public void Jump(){
 		GetComponent<Rigidbody2D> ().velocity = Vector2.up * jumpSpeed;
 	}
-	
-	
+
 	public void Update ()
 	{	
-		int horizontal = 0;     //Used to store the horizontal move direction.
-		int vertical = 0;       //Used to store the vertical move direction.
-		
-		
-		//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-		horizontal = (int) (Input.GetAxisRaw ("Horizontal"));
-		
-		//Get input from the input manager, round it to an integer and store in vertical to set y axis move direction
-		vertical = (int) (Input.GetAxisRaw ("Vertical"));
-		
-		//Check if moving horizontally, if so set vertical to zero.
-		if(horizontal != 0)
-		{
-			vertical = 0;
-		}
+		var board = GameManager.instance.boardScript;
+		board.CheckGameOver (transform.position.x);
 
 	}
 	

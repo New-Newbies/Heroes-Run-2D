@@ -14,9 +14,9 @@ public class Loader : MonoBehaviour {
 	public void AddScore(){
 		GameManager.instance.AddScore (1);
 	}
-	
+
 	public void InitGame(){
-		GameManager.instance.GetComponent<BoardManager> ().SetupScene();
+		GameManager.instance.boardScript.SetupScene ();
 	}
 
 }

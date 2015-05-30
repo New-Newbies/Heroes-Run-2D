@@ -80,6 +80,11 @@ public class BoardManager : MonoBehaviour {
 		sc.Reset ();
 	}
 
+	public void CheckGameOver(double positionX){
+		if (positionX < -delta.x/2) 
+			GameObject.Find ("GameOver").SetActive (true);
+	}
+
 	private float nextOb = 0;
 	void Update(){
 		if (!gameStarted)
