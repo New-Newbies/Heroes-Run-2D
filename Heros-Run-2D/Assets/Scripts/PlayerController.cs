@@ -14,7 +14,7 @@ public class PlayerController : MovingObject
 		base.Start ();
 	}
 
-	public void TestJump(){
+	public void Jump(){
 		GetComponent<Rigidbody2D> ().velocity = Vector2.up * jumpSpeed;
 	}
 	
