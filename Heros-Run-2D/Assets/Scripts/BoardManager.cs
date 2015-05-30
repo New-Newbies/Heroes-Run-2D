@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 public class BoardManager : MonoBehaviour {
 
 	private Transform boardHolder;
+	private bool gameStarted = false;
 
 	public float scrollSpeed = 0.1f;
 	public Text score;
@@ -50,7 +51,7 @@ public class BoardManager : MonoBehaviour {
 				sc1.Reset();
 			});
 		}
-
+		gameStarted = true;
 	}
 
 	Vector3 GetRandomPosition(){
@@ -81,6 +82,9 @@ public class BoardManager : MonoBehaviour {
 
 	private float nextOb = 0;
 	void Update(){
+		if (!gameStarted)
+			return;
+
 		if (Mathf.Abs(Screen.width - w)>=float.Epsilon && Mathf.Abs(Screen.height - h)>=float.Epsilon)
 			SetPos ();
 

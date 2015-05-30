@@ -11,4 +11,12 @@ public class Loader : MonoBehaviour {
 			Instantiate (gameManager);
 	}
 
+	public void AddScore(){
+		GameManager.instance.AddScore (1);
+	}
+	
+	public void InitGame(){
+		GameManager.instance.GetComponent<BoardManager> ().SetupScene();
+	}
+
 }
