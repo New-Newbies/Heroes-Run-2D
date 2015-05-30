@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour {
 		DontDestroyOnLoad (gameObject);
 
 		boardScript = GetComponent<BoardManager> ();
+
 		InitGame ();
 	}
 
@@ -36,6 +37,8 @@ public class GameManager : MonoBehaviour {
 	private void InitGame(){
 		var button = GameObject.Find ("ButtonJump").GetComponent<Button> ();
 		scoreText = GameObject.Find ("Score").GetComponent<Text> ();
+		var pause = GameObject.Find ("PauseButton");
+		pause.SetActive (true);
 
 		button.onClick.AddListener (() => {
 			AddScore(1);
