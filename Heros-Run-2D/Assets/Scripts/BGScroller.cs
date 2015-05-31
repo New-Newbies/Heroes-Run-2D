@@ -1,36 +1,20 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
+using System.Collections;
 
-public class BGScroller : MonoBehaviour
-{
+public class BGScroller : MonoBehaviour {
 
-	public float scrollSpeed;
-	public float tileSizeZ;
-	public bool loop;
+	public float scrollSpeed=0.5f;
 
-	public delegate void Action<T>(T t);
-
-	private Vector3 startPosition;
+	private Vector2 startTextureOffset;
 	private float startTime;
-
-	private Action<GameObject> resetFunc = t => {};
-	private bool enabled = true;
 	private float disableTime;
+	private Renderer renderer;
 
-	public void SetResetFunc(Action<GameObject> a){
-		resetFunc = a;
-	}
-
-	void Start ()
-	{
-		startPosition = transform.position;
+	// Use this for initialization
+	void Start () {
+		renderer = GetComponent<Renderer> ();
 		startTime = Time.time;
-	}
-
-	public void Reset(){
-		startPosition = transform.position;
-		startTime = Time.time;
-		enabled = true;
+		startTextureOffset = renderer.material.mainTextureOffset;
 	}
 
 	public void Disable(){
@@ -43,24 +27,12 @@ public class BGScroller : MonoBehaviour
 			enabled = true;
 		}
 	}
-	void Update ()
-	{
-		if (!enabled)
-			return;
+	
+	// Update is called once per frame
+	void Update () {
+		Vector2 offset = new Vector2 ((Time.time - startTime) * scrollSpeed, 0);
 
-		if (tileSizeZ == 0)
-			return;
-		if (loop) {
-			float newPosition = Mathf.Repeat (Time.time * scrollSpeed, tileSizeZ);
 
-			transform.position = startPosition + Vector3.left * newPosition;
-		} else {
-			float newPosition = (Time.time - startTime) * scrollSpeed;
-			if(newPosition > tileSizeZ){
-				resetFunc(gameObject);
-				Start ();
-			}
-			transform.position = startPosition + Vector3.left * newPosition;
-		}
+		renderer.material.mainTextureOffset = startTextureOffset + offset;
 	}
 }

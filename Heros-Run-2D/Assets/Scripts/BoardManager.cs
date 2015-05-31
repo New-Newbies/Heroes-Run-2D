@@ -16,12 +16,12 @@ public class BoardManager : MonoBehaviour {
 	public GameObject Trashcan;
 	public Vector2 offsetRate = new Vector2 (2 / 3.0f, 2 / 3.0f);
 	public float obstacleFreq = 1 / 2;
+	public float cloudFreq = 1 / 2;
 
-	private List<BGScroller> scs = new List<BGScroller>();
+	private List<GameObject> obstacles = new List<GameObject>();
+	private List<GameObject> clouds = new List<GameObject> ();
 
-	private GameObject bg1;
-	private GameObject bg2;
-	private GameObject bg3;
+	private GameObject background;
 
 	Vector3 delta;
 
@@ -31,94 +31,60 @@ public class BoardManager : MonoBehaviour {
 	Vector2 scale;
 
 	private void BoardSetup(){
+		scale = new Vector2 (1, 1);
 		boardHolder = new GameObject ("Board").transform;
-
-		bg1 = CreateObject (backgroundObject, new Vector3 (0, 0, 0f));
-		scs.Add(bg1.GetComponent<BGScroller>());
-		bg2 = CreateObject (backgroundObject, new Vector3 (0, 0, 0f));
-		scs.Add(bg2.GetComponent<BGScroller>());
-		bg3 = CreateObject (backgroundObject, new Vector3 (0, 0, 0f));
-		scs.Add(bg3.GetComponent<BGScroller>());
-
-		SetPos ();
+		background = CreateObject(backgroundObject, new Vector3 (0, 0, 0f));
 
 		for (int i=0; i<10; ++i) {
-			var c = CreateObject (cloud, new Vector3 (Random.Range(-delta.x/2, delta.x/2),
-			                                          Random.Range (delta.y / 2f - 2.2f, delta.y / 2f - 0.2f), 0f));
-			var sc = c.GetComponent<BGScroller> ();
-			scs.Add(sc);
-			sc.tileSizeZ = delta.x + c.transform.position.x;
-			c.SetActive (true);
-			sc.SetResetFunc (o => {
-				o.transform.position = new Vector3 (Random.Range(delta.x, delta.x + delta.x*0.1f),
-				                                    Random.Range (delta.y / 2f - 2.2f, delta.y / 2f - 0.2f), 0f);
-				var sc1 = c.GetComponent<BGScroller> ();
-				sc1.tileSizeZ = delta.x + c.transform.position.x;
-				sc1.Reset();
-			});
+			CreateObject(cloud, new Vector3(Random.Range(-10,10),Random.Range(3,5),-0.2f));
 		}
+
+		StartCoroutine (GenerateCloud());
+		StartCoroutine (GenerateObstacle());
+
 		gameStarted = true;
 	}
 
-	Vector3 GetRandomPosition(){
-		return new Vector3 (Random.Range (1, 10), Random.Range (1, 10), 0f);
+	private float nextCl;
+	private float nextOb;
+	public IEnumerator<bool> GenerateCloud(){
+		for (;;) {
+			if (Time.time < nextCl){
+				yield return false;
+				continue;
+			}
+
+			nextCl = Time.time + 1/cloudFreq;
+
+			var c = CreateObject (cloud, new Vector3 (Random.Range (10, 30), Random.Range (3, 5), -0.2f));
+			clouds.Add (c);
+			c.SetActive (true);
+			yield return true;
+		}
 	}
 
-	void SetPos(){
-		w = Screen.width;
-		h = Screen.height;
-		var p0 = Camera.main.ViewportToWorldPoint (new Vector3 (0, 0, 0));
-		var p1 = Camera.main.ViewportToWorldPoint (new Vector3 (1, 1, 0));
-		delta = p1 - p0;
-		scale = new Vector2 (delta.x/4.25f, delta.y/2.83f);
+	public IEnumerator<bool> GenerateObstacle(){
+		for (;;) {
+			if (Time.time <= nextOb){
+				yield return false;
+				continue;
+			}
+		
+			nextOb = Time.time + 1 / obstacleFreq;
 
-		ResetBackgroundObject (bg1, -delta.x/2, delta.x, scale);
-		ResetBackgroundObject (bg2, delta.x/2, delta.x, scale);
-		ResetBackgroundObject (bg3, delta.x + delta.x/2, delta.x, scale);
-	}
-
-	private void ResetBackgroundObject(
-			GameObject bg, float xOff, float tileSize, Vector2 scale){
-		bg.transform.position = new Vector3 (xOff, 0, 0f);
-		bg.transform.localScale = scale;
-		var sc = bg.GetComponent<BGScroller> ();
-		sc.tileSizeZ = tileSize;
-		sc.Reset ();
+			var obj = Random.Range (0, 2) == 0 ? Trashcan : fireHydrant;
+		
+			var c = CreateObject (obj, new Vector3 (Random.Range (10.0f, 30.0f), Random.Range (-1.0f, 1.0f), -0.3f));
+			obstacles.Add (c);
+			c.SetActive (true);
+		
+			yield return true;
+		}
 	}
 
 	public void CheckGameOver(double positionX){
-		if (positionX < -delta.x / 2) 
+		if (positionX < -10) 
 			Application.Quit ();
-	}
-
-	private float nextOb = 0;
-	void Update(){
-		if (!gameStarted)
-			return;
-
-		if (Mathf.Abs(Screen.width - w)>=float.Epsilon && Mathf.Abs(Screen.height - h)>=float.Epsilon)
-			SetPos ();
-
-		if (Time.time <= nextOb)
-			return;
-
-		var obj = Random.Range (0, 2) == 0 ? Trashcan : fireHydrant;
-
-		var c = CreateObject (obj, new Vector3 (Random.Range(2*delta.x, 3*delta.x),
-		                                          Random.Range (delta.y / 2f - 6.5f, delta.y / 2f - 5.5f), 0f));
-		var sc = c.GetComponent<BGScroller> ();
-		scs.Add (sc);
-		sc.tileSizeZ = delta.x + c.transform.position.x;
-		if(obj==Trashcan)
-			sc.transform.localScale = new Vector2 (0.2f, 0.2f);
-		c.SetActive (true);
-		sc.SetResetFunc (o => {
-			o.SetActive(false);
-			scs.Remove(sc);
-			Destroy(o);
-		});
-
-		nextOb = Time.time + 1/obstacleFreq;
 	}
 
 	public void SetupScene(){
@@ -129,16 +95,36 @@ public class BoardManager : MonoBehaviour {
 			Instantiate(obj, v, 
 			            Quaternion.identity) as GameObject;
 		instance.transform.SetParent(boardHolder);
+		instance.transform.localScale = new Vector3 (instance.transform.localScale.x * scale.x,
+		                                            instance.transform.localScale.y * scale.y,
+		                                             instance.transform.localScale.z);
 		return instance;
 	}
 	public void Pause(){
-		foreach (var sc in scs) {
-			sc.Disable();
+		foreach (var sc in obstacles) {
+			sc.GetComponent<ScrollingObject>().Disable();
 		}
+		foreach (var cl in clouds) {
+			cl.GetComponent<ScrollingObject>().Disable();
+		}
+		background.GetComponent<BGScroller> ().Disable ();
 	}
 	public void Continue(){
-		foreach (var sc in scs) {
-			sc.Enable();
+		foreach (var sc in obstacles) {
+			sc.GetComponent<ScrollingObject>().Disable();
 		}
+		foreach (var cl in clouds) {
+			cl.GetComponent<ScrollingObject>().Disable();
+		}
+		background.GetComponent<BGScroller>().Enable ();
+	}
+	public void ObjectDestroyed(GameObject obj){
+		if (obstacles.Find (o => o == obj))
+			obstacles.Remove (obj);
+		if (clouds.Find (o => o == obj))
+			clouds.Remove (obj);
+
+		obj.SetActive (false);
+		GameObject.Destroy(obj);
 	}
 }

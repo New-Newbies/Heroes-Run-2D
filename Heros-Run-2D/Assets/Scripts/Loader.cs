@@ -16,6 +16,7 @@ public class Loader : MonoBehaviour {
 	}
 
 	public void InitGame(){
+		Screen.orientation = ScreenOrientation.Landscape;
 		GameManager.instance.boardScript.SetupScene ();
 	}
 
