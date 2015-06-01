@@ -36,7 +36,8 @@ public class BoardManager : MonoBehaviour {
 		background = CreateObject(backgroundObject, new Vector3 (0, 0, 0f));
 
 		for (int i=0; i<10; ++i) {
-			CreateObject(cloud, new Vector3(Random.Range(-10,10),Random.Range(3,5),-0.2f));
+			var c = CreateObject(cloud, new Vector3(Random.Range(-10,10),Random.Range(3,5),-0.2f));
+			clouds.Add(c);
 		}
 
 		StartCoroutine (GenerateCloud());
@@ -45,11 +46,12 @@ public class BoardManager : MonoBehaviour {
 		gameStarted = true;
 	}
 
+	private bool paused;
 	private float nextCl;
 	private float nextOb;
 	public IEnumerator<bool> GenerateCloud(){
 		for (;;) {
-			if (Time.time < nextCl){
+			if (paused || Time.time < nextCl){
 				yield return false;
 				continue;
 			}
@@ -65,7 +67,7 @@ public class BoardManager : MonoBehaviour {
 
 	public IEnumerator<bool> GenerateObstacle(){
 		for (;;) {
-			if (Time.time <= nextOb){
+			if (paused || Time.time <= nextOb){
 				yield return false;
 				continue;
 			}
@@ -101,6 +103,7 @@ public class BoardManager : MonoBehaviour {
 		return instance;
 	}
 	public void Pause(){
+		paused = true;
 		foreach (var sc in obstacles) {
 			sc.GetComponent<ScrollingObject>().Disable();
 		}
@@ -109,12 +112,13 @@ public class BoardManager : MonoBehaviour {
 		}
 		background.GetComponent<BGScroller> ().Disable ();
 	}
-	public void Continue(){
+	public void Resume(){
+		paused = false;
 		foreach (var sc in obstacles) {
-			sc.GetComponent<ScrollingObject>().Disable();
+			sc.GetComponent<ScrollingObject>().Enable();
 		}
 		foreach (var cl in clouds) {
-			cl.GetComponent<ScrollingObject>().Disable();
+			cl.GetComponent<ScrollingObject>().Enable();
 		}
 		background.GetComponent<BGScroller>().Enable ();
 	}

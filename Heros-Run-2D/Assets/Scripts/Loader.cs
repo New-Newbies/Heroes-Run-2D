@@ -31,7 +31,7 @@ public class Loader : MonoBehaviour {
 		}
 		set {
 			if(value && !playing)
-				GameManager.instance.boardScript.Continue();
+				GameManager.instance.boardScript.Resume();
 
 			if(!value && playing)
 				GameManager.instance.boardScript.Pause();

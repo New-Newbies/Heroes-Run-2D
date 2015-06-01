@@ -12,8 +12,7 @@ public class ScrollingObject : MonoBehaviour
 	private float startTime;
 	
 	private bool enabled = true;
-	private float disableTime;
-	
+
 	void Start ()
 	{
 		startPosition = transform.position;
@@ -22,11 +21,10 @@ public class ScrollingObject : MonoBehaviour
 
 	public void Disable(){
 		enabled = false;
-		disableTime = Time.time;
 	}
 	public void Enable(){
 		if (!enabled) {
-			startTime += Time.time - disableTime;
+			Start ();
 			enabled = true;
 		}
 	}
