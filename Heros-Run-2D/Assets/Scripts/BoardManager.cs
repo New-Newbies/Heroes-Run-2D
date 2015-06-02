@@ -6,15 +6,11 @@ using Random = UnityEngine.Random;
 public class BoardManager : MonoBehaviour {
 
 	private Transform boardHolder;
-	private bool gameStarted = false;
 
-	public float scrollSpeed = 0.1f;
-	public Text score;
 	public GameObject backgroundObject;
 	public GameObject cloud;
 	public GameObject fireHydrant;
 	public GameObject Trashcan;
-	public Vector2 offsetRate = new Vector2 (2 / 3.0f, 2 / 3.0f);
 	public float obstacleFreq = 1 / 2;
 	public float cloudFreq = 1 / 2;
 
@@ -42,8 +38,10 @@ public class BoardManager : MonoBehaviour {
 
 		StartCoroutine (GenerateCloud());
 		StartCoroutine (GenerateObstacle());
+	}
 
-		gameStarted = true;
+	public bool IsPaused(){
+		return paused;
 	}
 
 	private bool paused;
@@ -84,8 +82,8 @@ public class BoardManager : MonoBehaviour {
 		}
 	}
 
-	public void CheckGameOver(double positionX){
-		if (positionX < -10) 
+	public void CheckPosition(Vector3 position){
+		if (position.x < -10) 
 			Application.Quit ();
 	}
 
@@ -111,6 +109,7 @@ public class BoardManager : MonoBehaviour {
 			cl.GetComponent<ScrollingObject>().Disable();
 		}
 		background.GetComponent<BGScroller> ().Disable ();
+		GameObject.Find ("Player").GetComponent<Animator> ().speed = 0;
 	}
 	public void Resume(){
 		paused = false;
